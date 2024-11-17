@@ -1,0 +1,41 @@
+Table Customer {
+  CustomerID int [pk, increment, note: "Unique identifier for each customer"]
+  Name varchar(100) [not null, note: "Customer's name"]
+  Email varchar(100) [not null, unique, note: "Customer's email address"]
+  Phone varchar(20) [note: "Customer's phone number"]
+  Address text [note: "Customer's delivery address"]
+  LoyaltyPoints int [default: 0, note: "Points for loyalty program"]
+}
+
+Table Product {
+  ProductID int [pk, increment, note: "Unique identifier for each product"]
+  Name varchar(100) [not null, note: "Product name"]
+  Description text [note: "Product description"]
+  Price decimal(10, 2) [not null, note: "Price per unit of product"]
+  StockQuantity int [not null, default: 0, note: "Available quantity in stock"]
+  Category varchar(50) [note: "Category of the product, e.g., bouquet, arrangement"]
+}
+
+Table Order {
+  OrderID int [pk, increment, note: "Unique identifier for each order"]
+  CustomerID int [ref: > Customer.CustomerID, not null, note: "Customer who placed the order"]
+  OrderDate datetime [not null, default: `CURRENT_TIMESTAMP`, note: "Date when the order was placed"]
+  Status varchar(50) [not null, note: "Current status of the order, e.g., 'new', 'delivered'"]
+  TotalAmount decimal(10, 2) [not null, note: "Total amount for the order"]
+}
+
+Table OrderItem {
+  OrderItemID int [pk, increment, note: "Unique identifier for each order item"]
+  OrderID int [ref: > Order.OrderID, not null, note: "Associated order for this item"]
+  ProductID int [ref: > Product.ProductID, not null, note: "Product in the order item"]
+  Quantity int [not null, note: "Quantity of the product ordered"]
+  Price decimal(10, 2) [not null, note: "Unit price of the product at the time of order"]
+}
+
+Table Delivery {
+  DeliveryID int [pk, increment, note: "Unique identifier for each delivery"]
+  OrderID int [ref: > Order.OrderID, unique, not null, note: "Order associated with this delivery"]
+  DeliveryDate datetime [note: "Scheduled or actual delivery date"]
+  DeliveryStatus varchar(50) [not null, note: "Status of the delivery, e.g., 'in transit', 'delivered'"]
+  Courier varchar(100) [note: "Courier or delivery service responsible"]
+}
